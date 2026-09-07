@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Explore Internships - InternHub{% endblock %}
+
+{% block content %}
+<div class="section-header">
+    <div>
+        <h1 class="section-title">Explore Open Internships</h1>
+        <p style="color: var(--text-muted);">Find the perfect role to build your experience and launch your career.</p>
+    </div>
+</div>
+
+<form method="GET" action="{{ url_for('internships.list_internships') }}" class="search-filter-bar">
+    <input type="text" name="q" placeholder="Search by title or keyword..." value="{{ search_query }}">
+    <input type="text" name="location" placeholder="Filter by location (e.g. Remote, NY)..." value="{{ location_filter }}">
+    <button type="submit" class="btn" style="width: auto;">Search Positions</button>
+    {% if search_query or location_filter %}
+        <a href="{{ url_for('internships.list_internships') }}" class="btn btn-secondary" style="width: auto; text-decoration: none;">Clear Filters</a>
+    {% endif %}
+</form>
+
+<div class="internship-grid">
+    {% if internships %}
+        {% for intern in internships %}
+        <div class="card">
+            <h3 class="card-title">{{ intern.title }}</h3>
+            <div class="card-company">🏢 {{ intern.users.name if intern.users else 'Verified Employer' }}</div>
+            <div class="card-meta">
+                <span>📍 {{ intern.location if intern.location else 'Remote' }}</span>
+                <span>💰 {{ intern.stipend if intern.stipend else 'Unpaid' }}</span>
+            </div>
+            <p class="card-desc">{{ intern.description[:120] }}{% if intern.description|length > 120 %}...{% endif %}</p>
+            <a href="{{ url_for('internships.detail', internship_id=intern.id) }}" class="btn">View & Apply</a>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+            <h3>No matching internships found</h3>
+            <p style="color: var(--text-muted); margin-top: 0.5rem;">Try adjusting your search criteria or explore again later.</p>
+            <a href="{{ url_for('internships.list_internships') }}" class="btn" style="margin-top: 1rem; width: auto;">Show All Internships</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

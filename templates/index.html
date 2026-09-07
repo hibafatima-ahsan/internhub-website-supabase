@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero">
+    <h1>Launch Your Career with InternHub</h1>
+    <p>Discover hand-picked internship opportunities at top companies, apply with ease, and track your progress in real-time.</p>
+    
+    <div style="margin-top: 1.5rem;">
+        <a href="{{ url_for('internships.list_internships') }}" class="btn" style="padding: 0.9rem 2rem; font-size: 1.05rem;">Browse Internships</a>
+        {% if not session.get('user_id') %}
+            <a href="{{ url_for('auth.register') }}" class="btn btn-secondary" style="padding: 0.9rem 2rem; font-size: 1.05rem; margin-left: 10px;">Post an Internship</a>
+        {% endif %}
+    </div>
+
+    <div class="hero-stats">
+        <div class="stat-box">
+            <div class="stat-number">{{ stats.internships_count if stats else '10+' }}</div>
+            <div class="stat-label">Active Openings</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">{{ stats.companies_count if stats else '5+' }}</div>
+            <div class="stat-label">Verified Companies</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">{{ stats.applications_count if stats else '25+' }}</div>
+            <div class="stat-label">Applications Submitted</div>
+        </div>
+    </div>
+</div>
+
+<div class="section-header">
+    <h2 class="section-title">Featured Internship Opportunities</h2>
+    <a href="{{ url_for('internships.list_internships') }}" style="color: var(--primary); font-weight: 600; text-decoration: none;">View All &rarr;</a>
+</div>
+
+<div class="internship-grid">
+    {% if internships %}
+        {% for intern in internships %}
+        <div class="card">
+            <h3 class="card-title">{{ intern.title }}</h3>
+            <div class="card-company">🏢 {{ intern.users.name if intern.users else 'Partner Company' }}</div>
+            <div class="card-meta">
+                <span>📍 {{ intern.location if intern.location else 'Remote' }}</span>
+                <span>💰 {{ intern.stipend if intern.stipend else 'Unpaid' }}</span>
+            </div>
+            <p class="card-desc">{{ intern.description[:110] }}{% if intern.description|length > 110 %}...{% endif %}</p>
+            <a href="{{ url_for('internships.detail', internship_id=intern.id) }}" class="btn">View Position</a>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+            <h3>No internships posted yet</h3>
+            <p style="color: var(--text-muted); margin-top: 0.5rem;">Be the first company to post an internship on InternHub!</p>
+            {% if session.get('role') == 'company' %}
+                <a href="{{ url_for('company.add_internship') }}" class="btn" style="margin-top: 1rem;">Post New Internship</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

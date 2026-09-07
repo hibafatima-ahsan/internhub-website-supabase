@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Console - InternHub{% endblock %}
+
+{% block content %}
+<div class="section-header">
+    <div>
+        <h1 class="section-title">Platform Admin Console</h1>
+        <p style="color: var(--text-muted);">Overview of system users, internship postings, and site moderation.</p>
+    </div>
+</div>
+
+<div class="hero-stats" style="margin-top: 1rem; margin-bottom: 2.5rem; max-width: 100%;">
+    <div class="stat-box" style="background: white; color: var(--text-main); border: 1px solid var(--border);">
+        <div class="stat-number" style="color: var(--primary);">{{ stats.total_users }}</div>
+        <div class="stat-label" style="color: var(--text-muted);">Total Registered Users</div>
+    </div>
+    <div class="stat-box" style="background: white; color: var(--text-main); border: 1px solid var(--border);">
+        <div class="stat-number" style="color: #10b981;">{{ stats.students }}</div>
+        <div class="stat-label" style="color: var(--text-muted);">Student Applicants</div>
+    </div>
+    <div class="stat-box" style="background: white; color: var(--text-main); border: 1px solid var(--border);">
+        <div class="stat-number" style="color: #0ea5e9;">{{ stats.companies }}</div>
+        <div class="stat-label" style="color: var(--text-muted);">Registered Companies</div>
+    </div>
+    <div class="stat-box" style="background: white; color: var(--text-main); border: 1px solid var(--border);">
+        <div class="stat-number" style="color: #8b5cf6;">{{ stats.internships }}</div>
+        <div class="stat-label" style="color: var(--text-muted);">Internships Posted</div>
+    </div>
+</div>
+
+<h2 style="font-size: 1.3rem; color: var(--dark-surface); margin-bottom: 1rem;">Registered User Accounts</h2>
+<div class="table-responsive">
+    <table>
+        <thead>
+            <tr>
+                <th>User Name</th>
+                <th>Email Address</th>
+                <th>Assigned Role</th>
+                <th>Joined Date</th>
+                <th>Management</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if users %}
+                {% for u in users %}
+                <tr>
+                    <td style="font-weight: 600;">{{ u.name }}</td>
+                    <td>{{ u.email }}</td>
+                    <td><span class="badge badge-role">{{ u.role }}</span></td>
+                    <td>{{ u.created_at[:10] if u.created_at else 'N/A' }}</td>
+                    <td>
+                        {% if u.id != session.get('user_id') %}
+                            <form action="{{ url_for('admin.delete_user', user_id=u.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm btn-confirm-delete">Delete User</button>
+                            </form>
+                        {% else %}
+                            <span style="color: var(--text-muted); font-size: 0.85rem;">(Current Admin)</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr><td colspan="5" style="text-align: center; padding: 2rem;">No user records found.</td></tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+<h2 style="font-size: 1.3rem; color: var(--dark-surface); margin-top: 3rem; margin-bottom: 1rem;">System Internship Postings</h2>
+<div class="table-responsive">
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Company</th>
+                <th>Location</th>
+                <th>Stipend</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if internships %}
+                {% for intern in internships %}
+                <tr>
+                    <td style="font-weight: 600;">{{ intern.title }}</td>
+                    <td>{{ intern.users.name if intern.users else 'Unknown' }}</td>
+                    <td>{{ intern.location }}</td>
+                    <td>{{ intern.stipend }}</td>
+                    <td>
+                        <div style="display: flex; gap: 6px;">
+                            <a href="{{ url_for('internships.detail', internship_id=intern.id) }}" class="btn btn-secondary btn-sm">View</a>
+                            <form action="{{ url_for('admin.delete_internship', internship_id=intern.id) }}" method="POST">
+                                <button type="submit" class="btn btn-danger btn-sm btn-confirm-delete">Remove</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr><td colspan="5" style="text-align: center; padding: 2rem;">No active internship listings found.</td></tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

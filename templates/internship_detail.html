@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}{{ internship.title }} - InternHub{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+    <a href="{{ url_for('internships.list_internships') }}" style="color: var(--text-muted); text-decoration: none; display: inline-block; margin-bottom: 1rem; font-weight: 500;">&larr; Back to Listings</a>
+    
+    <div class="card" style="padding: 2.5rem;">
+        <h1 style="font-size: 2rem; color: var(--dark-surface); margin-bottom: 0.5rem;">{{ internship.title }}</h1>
+        <div style="font-size: 1.1rem; color: var(--primary); font-weight: 600; margin-bottom: 1.5rem;">
+            🏢 {{ internship.users.name if internship.users else 'Verified Employer' }}
+        </div>
+
+        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; background: #f8fafc; padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-bottom: 2rem;">
+            <div><strong>Location:</strong> {{ internship.location if internship.location else 'Remote' }}</div>
+            <div><strong>Stipend:</strong> {{ internship.stipend if internship.stipend else 'Unpaid' }}</div>
+            <div><strong>Posted On:</strong> {{ internship.created_at[:10] if internship.created_at else 'Recently' }}</div>
+        </div>
+
+        <div style="margin-bottom: 2rem;">
+            <h3 style="font-size: 1.2rem; margin-bottom: 0.75rem; color: var(--dark-surface);">Job Description</h3>
+            <p style="white-space: pre-line; color: #334155; line-height: 1.7;">{{ internship.description }}</p>
+        </div>
+
+        {% if internship.requirements %}
+        <div style="margin-bottom: 2rem;">
+            <h3 style="font-size: 1.2rem; margin-bottom: 0.75rem; color: var(--dark-surface);">Requirements & Qualifications</h3>
+            <p style="white-space: pre-line; color: #334155; line-height: 1.7;">{{ internship.requirements }}</p>
+        </div>
+        {% endif %}
+
+        <div style="border-top: 1px solid var(--border); pt-4; padding-top: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+            {% if session.get('role') == 'student' %}
+                {% if has_applied %}
+                    <div class="badge badge-accepted" style="font-size: 1rem; padding: 0.6rem 1.2rem;">✓ Application Submitted</div>
+                {% else %}
+                    <form action="{{ url_for('internships.apply', internship_id=internship.id) }}" method="POST">
+                        <button type="submit" class="btn" style="padding: 0.8rem 2rem; font-size: 1.05rem;">Submit Application</button>
+                    </form>
+                {% endif %}
+            {% elif not session.get('user_id') %}
+                <div>
+                    <a href="{{ url_for('auth.login') }}" class="btn">Log in as Student to Apply</a>
+                </div>
+            {% else %}
+                <div style="color: var(--text-muted); font-size: 0.95rem;">Log in as a Student account to submit an application.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

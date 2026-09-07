@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}InternHub - Connecting Students with Top Internships{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <a href="{{ url_for('main.index') }}">
+                ⚡ Intern<span>Hub</span>
+            </a>
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('main.index') }}">Home</a>
+            <a href="{{ url_for('internships.list_internships') }}">Explore Internships</a>
+            
+            {% if session.get('user_id') %}
+                {% if session.get('role') == 'student' %}
+                    <a href="{{ url_for('student.dashboard') }}">Student Portal</a>
+                {% elif session.get('role') == 'company' %}
+                    <a href="{{ url_for('company.dashboard') }}">Company Portal</a>
+                {% elif session.get('role') == 'admin' %}
+                    <a href="{{ url_for('admin.dashboard') }}">Admin Console</a>
+                {% endif %}
+
+                <span class="role-badge">{{ session.get('role') }}</span>
+                <a href="{{ url_for('auth.logout') }}" class="btn-logout">Logout ({{ session.get('user_name') }})</a>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}">Login</a>
+                <a href="{{ url_for('auth.register') }}" class="btn-nav">Get Started</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        <span>{{ message }}</span>
+                        <button class="alert-close">&times;</button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer>
+        <p>&copy; {{ 2026 }} InternHub Platform. Built with Flask, Supabase & Jinja2.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Company Dashboard - InternHub{% endblock %}
+
+{% block content %}
+<div class="section-header">
+    <div>
+        <h1 class="section-title">Employer Dashboard</h1>
+        <p style="color: var(--text-muted);">Manage posted positions and evaluate applicant submissions for {{ session.get('user_name') }}.</p>
+    </div>
+    <a href="{{ url_for('company.add_internship') }}" class="btn" style="width: auto;">+ Post New Internship</a>
+</div>
+
+<h2 style="font-size: 1.3rem; color: var(--dark-surface); margin-top: 2rem; margin-bottom: 1rem;">Your Posted Openings</h2>
+<div class="table-responsive">
+    <table>
+        <thead>
+            <tr>
+                <th>Job Title</th>
+                <th>Location</th>
+                <th>Stipend</th>
+                <th>Date Posted</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if internships %}
+                {% for intern in internships %}
+                <tr>
+                    <td style="font-weight: 600;">{{ intern.title }}</td>
+                    <td>{{ intern.location }}</td>
+                    <td>{{ intern.stipend }}</td>
+                    <td>{{ intern.created_at[:10] if intern.created_at else 'N/A' }}</td>
+                    <td>
+                        <a href="{{ url_for('internships.detail', internship_id=intern.id) }}" class="btn btn-secondary btn-sm">View Listing</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                        No internships posted yet. Click below to list your first opportunity.
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+<h2 style="font-size: 1.3rem; color: var(--dark-surface); margin-top: 3rem; margin-bottom: 1rem;">Received Applications</h2>
+<div class="table-responsive">
+    <table>
+        <thead>
+            <tr>
+                <th>Candidate Name</th>
+                <th>Candidate Email</th>
+                <th>Target Position</th>
+                <th>Applied Date</th>
+                <th>Current Status</th>
+                <th>Update Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if applications %}
+                {% for app in applications %}
+                <tr>
+                    <td style="font-weight: 600;">{{ app.users.name if app.users else 'Student' }}</td>
+                    <td>{{ app.users.email if app.users else 'N/A' }}</td>
+                    <td>{{ app.internships.title if app.internships else 'N/A' }}</td>
+                    <td>{{ app.applied_at[:10] if app.applied_at else 'Recent' }}</td>
+                    <td>
+                        {% if app.status == 'Accepted' %}
+                            <span class="badge badge-accepted">Accepted</span>
+                        {% elif app.status == 'Rejected' %}
+                            <span class="badge badge-rejected">Rejected</span>
+                        {% else %}
+                            <span class="badge badge-pending">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form action="{{ url_for('company.update_application_status', application_id=app.id) }}" method="POST" style="display: flex; gap: 6px;">
+                            <button type="submit" name="status" value="Accepted" class="btn btn-success btn-sm">Accept</button>
+                            <button type="submit" name="status" value="Rejected" class="btn btn-danger btn-sm">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                        No candidate applications received yet.
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

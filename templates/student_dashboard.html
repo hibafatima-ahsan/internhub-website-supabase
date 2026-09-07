@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard - InternHub{% endblock %}
+
+{% block content %}
+<div class="section-header">
+    <div>
+        <h1 class="section-title">Student Dashboard</h1>
+        <p style="color: var(--text-muted);">Welcome back, {{ session.get('user_name') }}. Track your submitted applications below.</p>
+    </div>
+    <a href="{{ url_for('internships.list_internships') }}" class="btn" style="width: auto;">Find More Internships</a>
+</div>
+
+<div class="table-responsive">
+    <table>
+        <thead>
+            <tr>
+                <th>Internship Role</th>
+                <th>Company</th>
+                <th>Location</th>
+                <th>Stipend</th>
+                <th>Applied Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if applications %}
+                {% for app in applications %}
+                <tr>
+                    <td style="font-weight: 600;">
+                        <a href="{{ url_for('internships.detail', internship_id=app.internships.id) }}" style="color: var(--dark-surface); text-decoration: none;">
+                            {{ app.internships.title if app.internships else 'N/A' }}
+                        </a>
+                    </td>
+                    <td>{{ app.internships.users.name if (app.internships and app.internships.users) else 'Company' }}</td>
+                    <td>{{ app.internships.location if app.internships else '-' }}</td>
+                    <td>{{ app.internships.stipend if app.internships else '-' }}</td>
+                    <td>{{ app.applied_at[:10] if app.applied_at else 'Recent' }}</td>
+                    <td>
+                        {% if app.status == 'Accepted' %}
+                            <span class="badge badge-accepted">✓ Accepted</span>
+                        {% elif app.status == 'Rejected' %}
+                            <span class="badge badge-rejected">✕ Rejected</span>
+                        {% else %}
+                            <span class="badge badge-pending">⏳ Pending Review</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+                        You have not submitted any internship applications yet.<br>
+                        <a href="{{ url_for('internships.list_internships') }}" class="btn" style="margin-top: 1rem; width: auto;">Explore Available Opportunities</a>
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

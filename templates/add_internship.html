@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Post Internship - InternHub{% endblock %}
+
+{% block content %}
+<div class="form-container" style="max-width: 650px;">
+    <div class="form-header">
+        <h2>Post New Internship Position</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">Reach thousands of motivated student applicants on InternHub</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('company.add_internship') }}">
+        <div class="form-group">
+            <label for="title">Internship Title *</label>
+            <input type="text" id="title" name="title" placeholder="e.g. Software Engineering Intern, Marketing Trainee" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Detailed Job Description *</label>
+            <textarea id="description" name="description" rows="5" placeholder="Describe the responsibilities, project scope, and learning opportunities..." required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="requirements">Requirements & Skills</label>
+            <textarea id="requirements" name="requirements" rows="3" placeholder="e.g. Python, SQL, Git, Strong communication skills..."></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+                <label for="location">Location</label>
+                <input type="text" id="location" name="location" placeholder="e.g. Remote, San Francisco CA">
+            </div>
+
+            <div class="form-group">
+                <label for="stipend">Stipend / Compensation</label>
+                <input type="text" id="stipend" name="stipend" placeholder="e.g. $1,500/mo or Competitive">
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+            <button type="submit" class="btn" style="flex: 1;">Publish Internship</button>
+            <a href="{{ url_for('company.dashboard') }}" class="btn btn-secondary" style="width: auto; text-decoration: none;">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

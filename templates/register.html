@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Register - InternHub{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-header">
+        <h2>Create an Account</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">Join as a student applicant or employer</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('auth.register') }}">
+        <div class="form-group">
+            <label for="name">Full Name / Company Name</label>
+            <input type="text" id="name" name="name" placeholder="e.g. Jane Doe or Acme Corp" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="name@domain.com" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Minimum 6 characters" minlength="6" required autocomplete="new-password">
+        </div>
+
+        <div class="form-group">
+            <label for="role">I am registering as a:</label>
+            <select id="role" name="role" required>
+                <option value="student" selected>🎓 Student / Job Seeker</option>
+                <option value="company">🏢 Employer / Company</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn" style="width: 100%; margin-top: 0.5rem;">Register Now</button>
+    </form>
+
+    <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
+        Already have an account? <a href="{{ url_for('auth.login') }}" style="color: var(--primary); font-weight: 600; text-decoration: none;">Sign in</a>
+    </div>
+</div>
+{% endblock %}
