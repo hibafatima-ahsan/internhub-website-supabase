@@ -1,7 +1,8 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(Path(__file__).resolve().parent / '.env')
 
 class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "super-secret-internhub-key-change-in-production")
